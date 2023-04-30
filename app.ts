@@ -1,9 +1,10 @@
 //All imports
 import express from "express";
 import dotenv from "dotenv";
-import ProductRouter from "./routes/ProductsRoutes"
+import AuthRouter from "./routes/AuthRoutes"
 import { error } from "./middleware/errorMiddleWare";
-
+import cookieParser from "cookie-parser"
+import { graphqlHTTP } from "express-graphql";
 
 //  env file import 
  dotenv.config({
@@ -12,9 +13,15 @@ import { error } from "./middleware/errorMiddleWare";
 
   const app =express();
 
+  app.use(express.json());
+
+  app.use(cookieParser())
+
+  
+
   //**********************************Routes**********************************/
 
-  app.use("/api/v1",ProductRouter)
+  app.use("/api/v1",AuthRouter)
 
 
  //**********************************error middleware**********************************/
