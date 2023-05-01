@@ -4,9 +4,10 @@ import { isAuthenticateUser } from "../middleware/auth";
 
 
 const router=express.Router();
+//**********************************Rest Api  End Point*********************************/
 
 router.post("/createUser",createUser)
-router.post("/login",isAuthenticateUser,loginuser)
+router.post("/login",loginuser)
 router.get("/logout",logout)
 router.put("/updateuser/:id",updateUser)
 router.delete("/deleteuser/:id",delUser)

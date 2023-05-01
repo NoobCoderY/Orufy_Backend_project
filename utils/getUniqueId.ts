@@ -1,12 +1,13 @@
+
 function genUniqueId(): string {
     const dateStr = Date
       .now()
-      .toString(36); // convert num to base 36 and stringify
+      .toString(36); 
   
     const randomStr = Math
       .random()
       .toString(36)
-      .substring(2, 8); // start at index 2 to skip decimal point
+      .substring(2, 8); 
   
     return `${dateStr}-${randomStr}`;
   }

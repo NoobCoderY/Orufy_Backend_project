@@ -1,13 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
 import ErrorHandler from "../utils/ErrorHandler";
 import dbConnection from "../config/dbConnection";
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import { getJwt } from "../utils/jwttoken";
 import { CustomRequest } from "../middleware/auth";
 import getUniqueId from "../utils/getUniqueId";
 
 
-
+//**********************************Create User*********************************/
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.body.name || !req.body.email || !req.body.password ) {
@@ -37,6 +36,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 }
 
+//**********************************Login User*********************************/
 export const loginuser = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     if ( !req.body.email || !req.body.password ) {
@@ -70,6 +70,8 @@ export const loginuser = async (req: CustomRequest, res: Response, next: NextFun
   }
 }
 
+
+//**********************************Log Out*********************************/
 export const logout =async(req: Request, res: Response, next: NextFunction)=>{
 
   try {
@@ -89,6 +91,8 @@ export const logout =async(req: Request, res: Response, next: NextFunction)=>{
 
 }
 
+//**********************************Update User*********************************/
+
 export const updateUser=async(req: Request, res: Response, next: NextFunction)=>{
   try {
      const id=req.params.id;
@@ -107,6 +111,8 @@ export const updateUser=async(req: Request, res: Response, next: NextFunction)=>
 
 }
 
+
+//**********************************Delete User*********************************/
 export const delUser=async(req: Request, res: Response, next: NextFunction)=>{
   try {
 
