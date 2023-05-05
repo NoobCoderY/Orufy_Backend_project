@@ -15,7 +15,10 @@ import cors from "cors";
   const app =express();
   //**********************************Cross Origin*********************************/
 
-app.use(cors())
+app.use(cors({
+  credentials: true,
+  origin:"http://localhost:3000"
+}))
 app.use(express.json());
 app.use(cookieParser())
 
@@ -25,8 +28,8 @@ app.use(
   '/graphql',
   graphqlHTTP((req, res) => ({
      schema,
-    graphiql: true,
-    context: {
+     graphiql: true,
+     context: {
       res: res,
       req:req 
     },
