@@ -14,8 +14,6 @@ export const isAuthenticateUser=async(req:any)=>{
     const session = driver.session({ database: "neo4j" });
     const { token } = req.cookies;
     console.log(token,"c");
-    
-
     if (!token) {
       throw new Error("Please Login to access this resource");
     }

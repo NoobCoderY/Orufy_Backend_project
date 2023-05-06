@@ -23,6 +23,7 @@ const userType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     message: { type: GraphQLString },
+    token: { type: GraphQLString },
   }),
 });
 //**********************************Get DATA API********************************/
@@ -48,10 +49,7 @@ const Rootquery = new GraphQLObjectType({
       type: new GraphQLList(userType),
       resolve: async (parent,args,context) => {
         const { req } = context;
-        // const myCookieValue = request.cookies['token'];
-        // console.log(myCookieValue);
-        console.log(req.cookies.token,"b");
-        
+           isAuthenticateUser(req)
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const result = await session.run(`MATCH (u:User) return u`);
@@ -100,8 +98,14 @@ const Mutation = new GraphQLObjectType({
           // domain: 'http://localhost:3000',
           // secure: true,
           // sameSite:'none',
+          httpOnly:false
+          
+        
         });
-        return resu;
+        return {
+          resu,
+          token
+        };
       },
     },
 
@@ -168,9 +172,15 @@ const Mutation = new GraphQLObjectType({
             const token = getJwt(MatchResult.records[0].get("u").properties);
             res.cookie("token", token, {
               expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-              httpOnly: true,
+              httpOnly: false,
+              secure: false,
+              // sameSite:'none',
+          
             });
-            return result;
+            return {
+              result,
+              token
+            };
           }
         }
       },
