@@ -27,21 +27,11 @@ app.use(express.urlencoded({
 
 app.use(cookieParser())
 
-
-// Middleware to parse cookies
-// app.use((req:Request, res, next) => {
-//   const cookies = req.headers.cookie;
-//   console.log(cookies,"12");
-//   console.log(req.cookies,"13");
-//   next()
-  
-// });
  
   //**********************************GraphQL API Routes**********************************/
 app.use(
   '/graphql',
   cookieParser(),
-  // cors ({ credentials: true, origin: "http://localhost:3000" }),
   graphqlHTTP((req, res,getAuthUser) => ({
      schema,
      graphiql: true,

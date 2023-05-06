@@ -26,6 +26,8 @@ const userType = new GraphQLObjectType({
     token: { type: GraphQLString },
   }),
 });
+
+
 //**********************************Get DATA API********************************/
 const Rootquery = new GraphQLObjectType({
   name: "userDetails",
@@ -47,9 +49,9 @@ const Rootquery = new GraphQLObjectType({
     },
     AllUserDetails: {
       type: new GraphQLList(userType),
-      resolve: async (parent,args,context) => {
+      resolve: async (parent, args, context) => {
         const { req } = context;
-           isAuthenticateUser(req)
+        await isAuthenticateUser(req);
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const result = await session.run(`MATCH (u:User) return u`);
@@ -98,14 +100,11 @@ const Mutation = new GraphQLObjectType({
           // domain: 'http://localhost:3000',
           // secure: true,
           // sameSite:'none',
-          httpOnly:false
+          httpOnly: false,
+        });
+        return resu
           
         
-        });
-        return {
-          resu,
-          token
-        };
       },
     },
 
@@ -175,12 +174,10 @@ const Mutation = new GraphQLObjectType({
               httpOnly: false,
               secure: false,
               // sameSite:'none',
-          
             });
-            return {
-              result,
-              token
-            };
+            return result
+              
+             
           }
         }
       },
