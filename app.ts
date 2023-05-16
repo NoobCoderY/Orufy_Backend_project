@@ -1,5 +1,5 @@
 //All imports
-import express ,{Request}from "express";
+import express from "express";
 import dotenv from "dotenv";
 import AuthRouter from "./routes/AuthRoutes"
 import { error } from "./middleware/errorMiddleWare";
@@ -10,10 +10,12 @@ import cors from "cors";
 
 
 //  env file import 
+
  dotenv.config({
     path: "./config/config.env",
   });
   const app =express();
+  
   //**********************************Cross Origin*********************************/
 
 app.use(cors({
@@ -29,18 +31,16 @@ app.use(cookieParser())
 
  
   //**********************************GraphQL API Routes**********************************/
+
 app.use(
   '/graphql',
   cookieParser(),
-  graphqlHTTP((req, res,getAuthUser) => ({
+  graphqlHTTP((req, res) => ({
      schema,
      graphiql: true,
      context: {
       req:req, 
       res: res,
-      getAuthUser:getAuthUser
-     
-      
     },
   }))
 );
@@ -51,6 +51,7 @@ app.use(
 
 
  //**********************************error middleware**********************************/
+
   app.use(error)
 
  export default app;

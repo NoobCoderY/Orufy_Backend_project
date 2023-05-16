@@ -5,7 +5,6 @@ declare global{
             JWT_SECRET: Secret,
             NODE_ENV: 'development' | 'production',
             PORT:number
-
         }
     }
 }

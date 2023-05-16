@@ -1,17 +1,16 @@
 //**********************************ALL IMPORTS*********************************/
-import { resolve } from "path";
+
 import dbConnection from "../config/dbConnection";
 import { getJwt } from "../utils/jwttoken";
 import genUniqueId from "../utils/getUniqueId";
 import {
   GraphQLSchema,
   GraphQLObjectType,
-  GraphQLInt,
   GraphQLString,
   GraphQLList,
 } from "graphql";
 import { isAuthenticateUser } from "../middleware/graphQlAuth";
-import { log } from "console";
+
 
 //**********************************Types*********************************/
 
@@ -29,6 +28,7 @@ const userType = new GraphQLObjectType({
 
 
 //**********************************Get DATA API********************************/
+
 const Rootquery = new GraphQLObjectType({
   name: "userDetails",
   fields: {
@@ -67,7 +67,9 @@ const Rootquery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "mutation",
   fields: {
+
     //**********************************Registed User  End Point*********************************/
+
     registerUser: {
       type: userType,
       args: {
@@ -103,12 +105,11 @@ const Mutation = new GraphQLObjectType({
           httpOnly: false,
         });
         return resu
-          
-        
       },
     },
 
     //**********************************Update User  End Point*********************************/
+
     userUpdate: {
       type: userType,
       args: {
@@ -175,9 +176,7 @@ const Mutation = new GraphQLObjectType({
               secure: false,
               // sameSite:'none',
             });
-            return result
-              
-             
+            return result  
           }
         }
       },

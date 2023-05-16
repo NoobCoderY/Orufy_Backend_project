@@ -4,6 +4,8 @@ import { isAuthenticateUser } from "../middleware/auth";
 
 
 const router=express.Router();
+
+
 //**********************************Rest Api  End Point*********************************/
 
 router.post("/createUser",createUser)

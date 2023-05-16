@@ -8,6 +8,7 @@ interface user{
 }
 
 //**********************************Genrate JWT*********************************/
+
 export const getJwt=(user:user)=>{
   const token=jwt.sign(user,process.env.JWT_SECRET!)
 

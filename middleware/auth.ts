@@ -17,8 +17,6 @@ export const isAuthenticateUser = async (req: Request, res: Response, next: Next
     const driver = dbConnection()
     const session = driver.session({ database: "neo4j" });
     const { token } = req.cookies;
-    console.log(token);
-    
     if (!token) {
       return next(new ErrorHandler("Please Login to access this resource", 401));
     }
@@ -27,7 +25,6 @@ export const isAuthenticateUser = async (req: Request, res: Response, next: Next
     const data2 = result.records.map(i => i.get('t').properties);
     (req as CustomRequest).user = decodedData;
     next();
-
   } catch (error: any) {
     return (next(new ErrorHandler(error, 401)))
 
