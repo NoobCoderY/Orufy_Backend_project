@@ -4,7 +4,10 @@ declare global{
         interface ProcessEnv{
             JWT_SECRET: Secret,
             NODE_ENV: 'development' | 'production',
-            PORT:number
+            PORT:number,
+            DATABASE_URI:string,
+            USER_NAME:string,
+            PASSWORD:string
         }
     }
 }

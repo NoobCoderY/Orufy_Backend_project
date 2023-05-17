@@ -9,7 +9,6 @@ export interface CustomRequest extends Request {
 
 interface JwtPayload {
   _id: string;
-
 }
 
 export const isAuthenticateUser = async (req: Request, res: Response, next: NextFunction) => {

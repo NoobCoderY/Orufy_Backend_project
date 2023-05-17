@@ -19,7 +19,6 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     if (UniqueResult.records.length != 0) {
       if (req.body.email === UniqueResult.records[0].get('u').properties.email) {
         return (next(new ErrorHandler("this email is already used", 401)))
-
       }
     }
     const unique_id=getUniqueId();
@@ -31,7 +30,6 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     })
   } catch (error: any) {
     return (next(new ErrorHandler(error, 401)))
-
   }
 
 }
@@ -54,8 +52,7 @@ export const loginuser = async (req: CustomRequest, res: Response, next: NextFun
     else{
        if(req.body.password!=MatchResult.records[0].get('u').properties.password)
        {
-        return (next(new ErrorHandler("please enter correct Password", 401)))
-        
+        return (next(new ErrorHandler("please enter correct Password", 401)))  
        }
        else{
         const result=MatchResult.records[0].get('u').properties
@@ -66,7 +63,6 @@ export const loginuser = async (req: CustomRequest, res: Response, next: NextFun
         })
        }
     }
-  
   } catch (error:any) {
     return (next(new ErrorHandler(error, 401))) 
   }
@@ -81,16 +77,13 @@ export const logout =async(req: Request, res: Response, next: NextFunction)=>{
       expires: new Date(Date.now()),
       httpOnly: true,
     });
-  
     res.status(200).json({
       success: true,
       message: "Logged Out",
     });
-    
   } catch (error:any) {
     return (next(new ErrorHandler(error, 401))) 
   }
-
 }
 
 

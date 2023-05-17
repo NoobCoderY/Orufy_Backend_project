@@ -2,6 +2,7 @@
 
 import dbConnection from "../config/dbConnection";
 import { getJwt } from "../utils/jwttoken";
+import validator from 'validator';
 import genUniqueId from "../utils/getUniqueId";
 import {
   GraphQLSchema,
@@ -10,6 +11,7 @@ import {
   GraphQLList,
 } from "graphql";
 import { isAuthenticateUser } from "../middleware/graphQlAuth";
+import {validatePassword} from "../utils/InputValidators"
 
 
 //**********************************Types*********************************/
@@ -70,7 +72,7 @@ const Mutation = new GraphQLObjectType({
 
     //**********************************Registed User  End Point*********************************/
 
-    registerUser: {
+    RegisterUser: {
       type: userType,
       args: {
         name: { type: GraphQLString },
@@ -78,6 +80,12 @@ const Mutation = new GraphQLObjectType({
         password: { type: GraphQLString },
       },
       resolve: async (parent, args, { res }) => {
+        if (!validator.isEmail(args.email)) {
+          throw new Error('Invalid email address');
+        }
+        //password validation
+       await validatePassword(args.password)
+
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const UniqueResult = await session.run(
@@ -99,9 +107,6 @@ const Mutation = new GraphQLObjectType({
         const resu = result.records[0].get("u").properties;
         res.cookie("token", token, {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          // domain: 'http://localhost:3000',
-          // secure: true,
-          // sameSite:'none',
           httpOnly: false,
         });
         return resu
@@ -110,7 +115,7 @@ const Mutation = new GraphQLObjectType({
 
     //**********************************Update User  End Point*********************************/
 
-    userUpdate: {
+    UserUpdate: {
       type: userType,
       args: {
         _id: { type: GraphQLString },
@@ -119,19 +124,24 @@ const Mutation = new GraphQLObjectType({
         password: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
+        if (!validator.isEmail(args.email)) {
+          throw new Error('Invalid email address');
+        }
+        //password validation
+       await validatePassword(args.password)
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const result = await session.run(
           `MATCH (u:User {_id : '${args._id}'}) SET u.name= '${args.name}', u.email= '${args.email}', u.password= '${args.password}' return u`
         );
-        const r = result.records[0].get("u").properties;
-        return r;
+        const res = result.records[0].get("u").properties;
+        return res;
       },
     },
 
     //**********************************Delete User  End Point*********************************/
 
-    deleteUser: {
+    DeleteUser: {
       type: userType,
       args: {
         _id: { type: GraphQLString },
@@ -145,7 +155,10 @@ const Mutation = new GraphQLObjectType({
         };
       },
     },
-    loginUser: {
+
+    //**********************************Login User  End Point*********************************/
+
+    LoginUser: {
       type: userType,
       args: {
         email: { type: GraphQLString },
@@ -155,6 +168,12 @@ const Mutation = new GraphQLObjectType({
         if (!args.email || !args.password) {
           throw new Error("please enter details");
         }
+        if (!validator.isEmail(args.email)) {
+          throw new Error('Invalid email address');
+        }
+        //password validation
+       await validatePassword(args.password)
+
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const MatchResult = await session.run(
@@ -183,7 +202,7 @@ const Mutation = new GraphQLObjectType({
     },
 
     //**********************************logout User  End Point*********************************/
-    logout: {
+    Logout: {
       type: GraphQLString,
       resolve: async (parent, args, { res }) => {
         res.cookie("token", null, {
