@@ -14,8 +14,8 @@ const router = express.Router();
 
 //**********************************Rest Api  End Point*********************************/
 
-router.post(
-  "/createUser",
+router.post( "/createUser",
+  //check input validation
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("email").isEmail().withMessage("Invalid email address"),
@@ -26,9 +26,9 @@ router.post(
   validationMiddleware,
   createUser
 );
-router.post(
-  "/login",
+router.post( "/login",
   [
+    //check input validation
     body("email").isEmail().withMessage("Invalid email address"),
     body("password")
       .isLength({ min: 8 })
@@ -38,9 +38,9 @@ router.post(
   loginuser
 );
 router.get("/logout", logout);
-router.put(
-  "/updateuser/:id",
+router.put( "/updateuser/:id",
   [
+    //check input validation
     body("name").notEmpty().withMessage("Name is required"),
     body("email").isEmail().withMessage("Invalid email address"),
     body("password")

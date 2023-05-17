@@ -40,6 +40,7 @@ const Rootquery = new GraphQLObjectType({
         _id: { type: GraphQLString },
       },
       resolve: async (parent, args, { req }): Promise<any> => {
+        //database initialize
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const result = await session.run(
@@ -53,7 +54,9 @@ const Rootquery = new GraphQLObjectType({
       type: new GraphQLList(userType),
       resolve: async (parent, args, context) => {
         const { req } = context;
+        //middleware for only authentic user access
         await isAuthenticateUser(req);
+        //database initialize
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const result = await session.run(`MATCH (u:User) return u`);
@@ -83,11 +86,12 @@ const Mutation = new GraphQLObjectType({
         if (!validator.isEmail(args.email)) {
           throw new Error('Invalid email address');
         }
-        //password validation
-       await validatePassword(args.password)
+        //password validation middleware
+        validatePassword(args.password)
 
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
+        //unique email find
         const UniqueResult = await session.run(
           `MATCH (u:User {email :'${args.email}'} ) return u limit 1`
         );
@@ -103,8 +107,10 @@ const Mutation = new GraphQLObjectType({
           `CREATE (u:User {_id : '${unique_id}', name:'${args.name}',email:'${args.email}',password:'${args.password}'} ) return u`
         );
         const data2 = result.records.map((i) => i.get("u"));
+        //token generator
         const token = getJwt(data2[0].properties);
         const resu = result.records[0].get("u").properties;
+        //token saved in cookie
         res.cookie("token", token, {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           httpOnly: false,
@@ -127,10 +133,21 @@ const Mutation = new GraphQLObjectType({
         if (!validator.isEmail(args.email)) {
           throw new Error('Invalid email address');
         }
-        //password validation
-       await validatePassword(args.password)
+        //password validation middleware
+        validatePassword(args.password)
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
+        //already exist email checking
+        const UniqueResult = await session.run(
+          `MATCH (u:User {email :'${args.email}'} ) return u limit 1`
+        );
+        if (UniqueResult.records.length != 0 ) {
+          if (
+            args.email === UniqueResult.records[0].get("u").properties.email
+          ) {
+            throw new Error("this email is already used");
+          }
+        }
         const result = await session.run(
           `MATCH (u:User {_id : '${args._id}'}) SET u.name= '${args.name}', u.email= '${args.email}', u.password= '${args.password}' return u`
         );
@@ -171,9 +188,9 @@ const Mutation = new GraphQLObjectType({
         if (!validator.isEmail(args.email)) {
           throw new Error('Invalid email address');
         }
-        //password validation
-       await validatePassword(args.password)
-
+        //password validation middleware
+        validatePassword(args.password)
+      //database initialize
         const driver = dbConnection();
         const session = driver.session({ database: "neo4j" });
         const MatchResult = await session.run(
@@ -188,7 +205,9 @@ const Mutation = new GraphQLObjectType({
             throw new Error("please enter correct Password");
           } else {
             const result = MatchResult.records[0].get("u").properties;
+            //token generator
             const token = getJwt(MatchResult.records[0].get("u").properties);
+            //token saved in cookie
             res.cookie("token", token, {
               expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               httpOnly: false,
@@ -205,6 +224,7 @@ const Mutation = new GraphQLObjectType({
     Logout: {
       type: GraphQLString,
       resolve: async (parent, args, { res }) => {
+        //token expire
         res.cookie("token", null, {
           expires: new Date(Date.now()),
           httpOnly: true,
@@ -216,5 +236,6 @@ const Mutation = new GraphQLObjectType({
 });
 
 //**********************************SCHEMA EXPORTED*********************************/
+
 const schema = new GraphQLSchema({ query: Rootquery, mutation: Mutation });
 export default schema;
